@@ -1,0 +1,8 @@
+allOf:
+  - $ref: '#/components/schemas/DeliveryKey'
+  - type: object
+    required:
+      - attributes
+    properties:
+      attributes:
+        type: object

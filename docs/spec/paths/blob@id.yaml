@@ -1,0 +1,26 @@
+get:
+  tags:
+    - blob
+  description: Get a single blob by his id
+  parameters:
+    - $ref: '#/components/parameters/idParam.yaml'
+  responses:
+    '200':
+      description: The blob is returned
+      content:
+        'application/vnd.api+json':
+          schema:
+            $ref: '#/components/schemas/blob.yaml'
+    '404':
+      description: The blob wasn't found
+delete:
+  tags:
+    - blob
+  description: Delete a blob by his id
+  parameters:
+    - $ref: '#/components/parameters/idParam.yaml'
+  responses:
+    '200':
+      description: The blob was deleted
+    '404':
+      description: The blob wasn't found

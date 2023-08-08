@@ -13,70 +13,8 @@ tags:
 
 paths:
   /blob/{id}:
-    get:
-      tags:
-        - blob
-      description: Get a single blob by his id
-      parameters:
-        - $ref: './components/parameters/idParam.yaml'
-      responses:
-        '200':
-          description: The blob is returned
-          content:
-            'application/vnd.api+json':
-              schema:
-                $ref: './components/schemas/blobSchema.yaml'
-        '404':
-          description: The blob wasn't found
-    delete:
-      tags:
-        - blob
-      description: Delete a blob by his id
-      parameters:
-        - $ref: './components/parameters/idParam.yaml'
-      responses:
-        '200':
-          description: The blob was deleted
-        '404':
-          description: The blob wasn't found
+    $ref: './paths/blob@id.yaml'
   /blob/create:
-    post:
-      tags:
-        - blob
-      description: Creates and returns a new blob
-      requestBody:
-        description: Should contain JSON with a new blob
-        content:
-          'application/vnd.api+json':
-            schema:
-              $ref: './components/schemas/blobSchema.yaml'
-            example:
-              type: blob
-              id: null
-              attributes: [first, second, last]
-        required: true
-      responses:
-        '200':
-          description: A new blob is created
-          content:
-            'application/vnd.api+json':
-              schema:
-                $ref: './components/schemas/blobSchema.yaml'
-  /blob/list:
-    get:
-      tags:
-        - blob
-      description: Returns a list of blobs
-      parameters:
-        - $ref: './components/parameters/pageLimitParam.yaml'
-        - $ref: './components/parameters/pageNumberParam.yaml'
-        - $ref: './components/parameters/sortingParam.yaml'
-      responses:
-        '200':
-          description: The list of blobs is returned
-          content:
-            'application/vnd.api+json':
-              schema:
-                type: array
-                items:
-                  $ref: './components/schemas/blobSchema.yaml'
+    $ref: './paths/blob@create.yaml'
+  /blobs:
+    $ref: './paths/blobs.yaml'

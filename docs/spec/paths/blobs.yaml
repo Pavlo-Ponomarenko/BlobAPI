@@ -1,0 +1,17 @@
+get:
+  tags:
+    - blob
+  description: Returns a list of blobs
+  parameters:
+    - $ref: '#/components/parameters/pageLimitParam.yaml'
+    - $ref: '#/components/parameters/pageNumberParam.yaml'
+    - $ref: '#/components/parameters/sortingParam.yaml'
+  responses:
+    '200':
+      description: The list of blobs is returned
+      content:
+        'application/vnd.api+json':
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/blob.yaml'
