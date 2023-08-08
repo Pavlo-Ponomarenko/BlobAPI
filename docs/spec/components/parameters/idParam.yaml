@@ -1,0 +1,6 @@
+name: id
+in: path
+description: object's id
+required: true
+schema:
+  type: integer
