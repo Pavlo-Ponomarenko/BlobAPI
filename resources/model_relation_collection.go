@@ -3,19 +3,19 @@
  */
 
 package resources
-
-import "encoding/json"
+import "gitlab.com/tokend/go/xdr"
 
 type RelationCollection struct {
-	Data  []Key  `json:"data"`
+	Data []Key `json:"data"`
 	Links *Links `json:"links,omitempty"`
 }
 
 func (r RelationCollection) MarshalJSON() ([]byte, error) {
-	if r.Data == nil {
-		r.Data = []Key{}
-	}
+    if r.Data == nil {
+        r.Data = []Key{}
+    }
 
-	type temp RelationCollection
-	return json.Marshal(temp(r))
+    type temp RelationCollection
+    return json.Marshal(temp(r))
 }
+

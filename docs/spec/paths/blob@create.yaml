@@ -18,3 +18,5 @@ post:
         'application/vnd.api+json':
           schema:
             $ref: '#/components/schemas/blob.yaml'
+    '400':
+      description: Inappropriate blob data

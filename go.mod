@@ -17,6 +17,7 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/magiconair/properties v1.8.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
+	github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -31,6 +32,7 @@ require (
 	gitlab.com/distributed_lab/kit v1.11.2 // indirect
 	gitlab.com/distributed_lab/logan v3.8.1+incompatible // indirect
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
+	gitlab.com/tokend/go v3.16.0+incompatible // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.3.3 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

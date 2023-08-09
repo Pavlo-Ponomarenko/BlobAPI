@@ -3,7 +3,7 @@
  */
 
 package resources
-
+import "gitlab.com/tokend/go/xdr"
 type ResourceType string
 
 // List of ResourceType
