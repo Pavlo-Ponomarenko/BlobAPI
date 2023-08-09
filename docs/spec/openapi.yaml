@@ -6,15 +6,3 @@ info:
 servers:
   - url: 'https://api.demo.tokend.io'
     description: TokenD Developer Environment
-
-tags:
-  - name: blob
-    description: Operations with blobs
-
-paths:
-  /blob/{id}:
-    $ref: './paths/blob@id.yaml'
-  /blob/create:
-    $ref: './paths/blob@create.yaml'
-  /blobs:
-    $ref: './paths/blobs.yaml'

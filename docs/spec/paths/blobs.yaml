@@ -1,6 +1,4 @@
 get:
-  tags:
-    - blob
   description: Returns a list of blobs
   parameters:
     - $ref: '#/components/parameters/pageLimitParam.yaml'

@@ -1,6 +1,4 @@
 get:
-  tags:
-    - blob
   description: Get a single blob by his id
   parameters:
     - $ref: '#/components/parameters/idParam.yaml'
@@ -14,8 +12,6 @@ get:
     '404':
       description: The blob wasn't found
 delete:
-  tags:
-    - blob
   description: Delete a blob by his id
   parameters:
     - $ref: '#/components/parameters/idParam.yaml'

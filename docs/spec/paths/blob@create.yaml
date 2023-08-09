@@ -1,6 +1,4 @@
 post:
-  tags:
-    - blob
   description: Creates and returns a new blob
   requestBody:
     description: Should contain JSON with a new blob
