@@ -3,9 +3,8 @@
  */
 
 package resources
-import "gitlab.com/tokend/go/xdr"
 
 type Relation struct {
-	Data *Key `json:"data,omitempty"`
+	Data  *Key   `json:"data,omitempty"`
 	Links *Links `json:"links,omitempty"`
 }

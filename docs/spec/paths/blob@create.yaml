@@ -20,3 +20,5 @@ post:
             $ref: '#/components/schemas/blob.yaml'
     '400':
       description: Inappropriate blob data
+    '500':
+      description: Server error

@@ -3,33 +3,29 @@
  */
 
 package resources
-import "gitlab.com/tokend/go/xdr"
 
 type Blob struct {
-    Key
+	Key
 	Attributes map[string]interface{} `json:"attributes"`
 }
 type BlobResponse struct {
-    Data Blob `json:"data"`
-    Included Included  `json:"included"`
+	Data     Blob     `json:"data"`
+	Included Included `json:"included"`
 }
-
 
 type BlobListResponse struct {
-    Data []Blob `json:"data"`
-    Included Included    `json:"included"`
-    Links    *Links      `json:"links"`
+	Data     []Blob   `json:"data"`
+	Included Included `json:"included"`
+	Links    *Links   `json:"links"`
 }
-
 
 // MustBlob - returns Blob from include collection.
 // if entry with specified key does not exist - returns nil
 // if entry with specified key exists but type or ID mismatches - panics
 func (c *Included) MustBlob(key Key) *Blob {
-    var blob Blob
-    if c.tryFindEntry(key, &blob) {
-        return &blob
-    }
-    return nil
+	var blob Blob
+	if c.tryFindEntry(key, &blob) {
+		return &blob
+	}
+	return nil
 }
-

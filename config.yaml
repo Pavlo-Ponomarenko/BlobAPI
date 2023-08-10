@@ -3,14 +3,14 @@ log:
   disable_sentry: true
 
 db:
-  url: db_url
+  url: postgresql://user:postgres@localhost:5432/postgres?sslmode=disable
 
 listener:
   addr: :8000
 
 cop:
   disabled: true
-  endpoint: "http://..."
-  upstream: "http://..."
+  endpoint: "localhost"
+  upstream: "localhost"
   service_name: blob-service
   service_port: 80

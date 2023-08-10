@@ -2,8 +2,7 @@ package service
 
 import (
 	"blob-service/internal/service/handlers"
-	"net/http"
-
+	"blob-service/internal/service/requests"
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
 )
@@ -18,11 +17,12 @@ func (s *service) router() chi.Router {
 			handlers.CtxLog(s.log),
 		),
 	)
-	r.Route("/integrations/blob-service", func(r chi.Router) {
+	r.Route("/blob-service", func(r chi.Router) {
 		// configure endpoints here
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/vnd.api+json")
-		})
+		r.Get("/blob/{id}", requests.Get_blob_by_id)
+		r.Get("/blobs", requests.Get_page_of_blobs)
+		r.Post("/blob/create", requests.Create_new_blob)
+		r.Delete("/blob/{id}", requests.Delete_blob)
 	})
 
 	return r
