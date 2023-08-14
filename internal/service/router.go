@@ -19,10 +19,12 @@ func (s *service) router() chi.Router {
 	)
 	r.Route("/blob-service", func(r chi.Router) {
 		// configure endpoints here
-		r.Get("/blob/{id}", requests.Get_blob_by_id)
-		r.Get("/blobs", requests.Get_page_of_blobs)
-		r.Post("/blob/create", requests.Create_new_blob)
-		r.Delete("/blob/{id}", requests.Delete_blob)
+		r.Get("/blobs/{id}", requests.GetBlobById)
+		r.Get("/blobs/", requests.GetPageOfBlobs)
+		r.Post("/blobs/", requests.CreateNewBlob)
+		r.Delete("/blobs/{id}", requests.DeleteBlob)
+		r.Put("/blobs/{id}", requests.UpdateBlob)
+		r.Patch("/blobs/{id}", requests.UpdateBlob)
 	})
 
 	return r

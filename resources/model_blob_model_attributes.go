@@ -4,6 +4,6 @@
 
 package resources
 
-type Blob struct {
-	Data BlobModel `json:"data"`
+type BlobModelAttributes struct {
+	Value *map[string]interface{} `json:"value,omitempty"`
 }

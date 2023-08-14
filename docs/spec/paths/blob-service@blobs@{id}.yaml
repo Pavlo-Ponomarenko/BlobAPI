@@ -1,0 +1,82 @@
+get:
+  description: Get a single blob by his id
+  parameters:
+    - $ref: '#/components/parameters/idParam'
+  responses:
+    '200':
+      description: The blob is returned
+      content:
+        'application/vnd.api+json':
+          schema:
+            $ref: '#/components/schemas/blobContent'
+    '404':
+      description: The blob wasn't found
+    '500':
+      description: Server error
+delete:
+  description: Delete a blob by his id
+  parameters:
+    - $ref: '#/components/parameters/idParam'
+  responses:
+    '200':
+      description: The blob was deleted
+    '404':
+      description: The blob wasn't found
+    '500':
+      description: Server error
+
+put:
+  description: Updates blob
+  parameters:
+    - $ref: '#/components/parameters/idParam'
+  content:
+    'application/vnd.api+json':
+      schema:
+        $ref: '#/components/schemas/blob'
+      example:
+        data:
+          type: blob
+          id: null
+          attributes: { first: null, second: null, last: null }
+  required: true
+  responses:
+    '200':
+      description: The blob was updated
+      content:
+        'application/vnd.api+json':
+          schema:
+            $ref: '#/components/schemas/blob'
+    '400':
+      description: Inappropriate blob data
+    '404':
+      description: Inappropriate blob data
+    '500':
+      description: Server error
+
+patch:
+  description: The same as 'PUT'
+  parameters:
+    - $ref: '#/components/parameters/idParam'
+  content:
+    'application/vnd.api+json':
+      schema:
+        $ref: '#/components/schemas/blobContent'
+      example:
+        data:
+          type: blob
+          id: null
+          attributes: { first: null, second: null, last: null }
+  required: true
+  responses:
+    '200':
+      description: The blob was updated
+      content:
+        'application/vnd.api+json':
+          schema:
+            $ref: '#/components/schemas/blobContent'
+    '400':
+      description: Inappropriate blob data
+    '404':
+      description: Inappropriate blob data
+    '500':
+      description: Server error

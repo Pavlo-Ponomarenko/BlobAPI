@@ -1,7 +1,7 @@
 -- +migrate Up
 create table blobs (
-    id serial primary key not null,
-    blob bytea
+    id varchar primary key not null,
+    blob jsonb
 );
 -- +migrate Down
 drop table blobs;

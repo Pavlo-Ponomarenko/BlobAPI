@@ -1,0 +1,43 @@
+get:
+  description: Returns a list of blobs
+  parameters:
+    - $ref: '#/components/parameters/pageLimitParam'
+    - $ref: '#/components/parameters/pageNumberParam'
+    - $ref: '#/components/parameters/sortingParam'
+  responses:
+    '200':
+      description: The list of blobs is returned
+      content:
+        'application/vnd.api+json':
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/blob'
+    '500':
+      description: Server error
+
+post:
+  description: Creates and returns a new blob
+  requestBody:
+    description: Should contain JSON with a new blob
+    content:
+      'application/vnd.api+json':
+        schema:
+          $ref: '#/components/schemas/blob'
+        example:
+          data:
+            type: blob
+            id: ''
+            attributes: { first: null, second: null, last: null }
+    required: true
+  responses:
+    '200':
+      description: A new blob is created
+      content:
+        'application/vnd.api+json':
+          schema:
+            $ref: '#/components/schemas/blob'
+    '400':
+      description: Inappropriate blob data
+    '500':
+      description: Server error

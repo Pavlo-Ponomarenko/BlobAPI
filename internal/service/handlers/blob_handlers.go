@@ -9,41 +9,46 @@ import (
 	"strconv"
 )
 
-var get_blob = "select * from blobs where id = $1"
-var save_blob = "insert into blobs (blob) values ($1)"
-var delete_blob = "delete from blobs where id = $1"
-var get_blobs_page = "select * from blobs"
+var getBlob = "select * from blobs where id = $1"
+var saveBlob = "insert into blobs (id, blob) values ($1, $2)"
+var deleteBlob = "delete from blobs where id = $1"
+var getBlobsPage = "select * from blobs"
+var updateBlob = "update blobs set blob = $1 where id = $2"
 
-func get_DB() (*sql.DB, error) {
+func getDb() (*sql.DB, error) {
 	connection := "postgres://user:postgres@localhost/postgres?sslmode=disable"
-	return sql.Open("postgres", connection)
+	db, err := sql.Open("postgres", connection)
+	if err != nil {
+		fmt.Println("DB connection error")
+	}
+	return db, err
 }
 
-func retrieve_blob(rows *sql.Rows) (*res.Blob, error) {
-	blob := new(res.Blob)
+func retrieveBlob(rows *sql.Rows) (*res.BlobModel, error) {
+	blob := new(res.BlobModel)
 	blob.Type = "blob"
 	bytea := make([]byte, 0, 1000)
 	err := rows.Scan(&blob.ID, &bytea)
 	if err != nil {
 		return nil, err
 	}
-	attributes := make(map[string]interface{})
-	err = json.Unmarshal(bytea, &attributes)
+	attributeMap := make(map[string]interface{})
+	err = json.Unmarshal(bytea, &attributeMap)
 	if err != nil {
 		return nil, err
 	}
-	blob.Attributes = attributes
+	blob.Attributes.Value = &attributeMap
 	return blob, nil
 }
 
-func Get_blob_by_id(id int) (*res.Blob, error) {
-	db, err := get_DB()
+func GetBlobById(id string) (*res.BlobModel, error) {
+	db, err := getDb()
 	if err != nil {
-		fmt.Println("DB connection error")
+
 		return nil, err
 	}
 	defer db.Close()
-	rows, err := db.Query(get_blob, id)
+	rows, err := db.Query(getBlob, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return nil, err
@@ -53,83 +58,113 @@ func Get_blob_by_id(id int) (*res.Blob, error) {
 		return nil, errors.New("")
 	}
 	defer rows.Close()
-	return retrieve_blob(rows)
+	return retrieveBlob(rows)
 }
 
-func form_query(params map[string]string) (*string, error) {
-	query := get_blobs_page
+func formQuery(params map[string]string) (*string, error) {
+	query := getBlobsPage
 	order, exists := params["order"]
 	if exists && (order == "asc" || order == "desc") {
 		query = query + " order by id " + order
 	}
 	limit, exists := params["limit"]
 	if exists {
-		limit_value, err := strconv.Atoi(limit)
-		if err != nil || limit_value < 0 {
+		limitValue, err := strconv.Atoi(limit)
+		if err != nil || limitValue < 0 {
 			return nil, err
 		}
 		query = query + " limit " + limit
 		number, exists := params["number"]
 		if exists {
-			number_value, err := strconv.Atoi(number)
-			if err != nil || number_value < 0 {
-				return nil, err
+			numberValue, err := strconv.Atoi(number)
+			if err != nil || numberValue < 1 {
+				return nil, errors.New("")
 			}
-			query = query + " offset " + strconv.Itoa(limit_value*(number_value-1))
+			query = query + " offset " + strconv.Itoa(limitValue*(numberValue-1))
 		}
 	}
 	return &query, nil
 }
 
-func Get_blobs(params map[string]string) (*res.BlobListResponse, error) {
-	query, err := form_query(params)
+func GetBlobs(params map[string]string) (*res.BlobModelListResponse, error) {
+	query, err := formQuery(params)
 	if err != nil {
 		return nil, err
 	}
-	db, err := get_DB()
+	db, err := getDb()
 	if err != nil {
-		fmt.Println("DB connection error")
 		return nil, err
 	}
 	defer db.Close()
 	rows, err := db.Query(*query)
-	blobs := make([]res.Blob, 0, 20)
+	blobs := make([]res.BlobModel, 0, 20)
 	for rows.Next() {
-		blob, _ := retrieve_blob(rows)
+		blob, _ := retrieveBlob(rows)
 		blobs = append(blobs, *blob)
 	}
-	blob_response := new(res.BlobListResponse)
-	blob_response.Data = blobs
-	return blob_response, nil
+	blobResponse := new(res.BlobModelListResponse)
+	blobResponse.Data = blobs
+	return blobResponse, nil
 }
 
-func Save_blob(blob *res.Blob) error {
-	db, err := get_DB()
+func SaveBlob(blob *res.Blob) error {
+	db, err := getDb()
 	if err != nil {
-		fmt.Println("DB connection error")
 		return err
 	}
 	defer db.Close()
-	json_repr, err := json.Marshal(blob.Attributes)
+	jsonRepr, err := json.Marshal(blob.Data.Attributes.Value)
 	if err != nil {
 		fmt.Println("Attributes encoding error")
 		return err
 	}
-	_, err = db.Exec(save_blob, json_repr)
+	_, err = db.Exec(saveBlob, blob.Data.ID, jsonRepr)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 	}
 	return err
 }
 
-func Delete_Blob(id int) error {
-	db, err := get_DB()
+func DeleteBlob(id string) error {
+	db, err := getDb()
 	if err != nil {
-		fmt.Println("DB connection error")
 		return err
 	}
 	defer db.Close()
-	_, err = db.Query(delete_blob, id)
+	_, err = db.Query(deleteBlob, id)
+	if err != nil {
+		fmt.Println("SQL execution error:", err)
+		return err
+	}
+	return nil
+}
+
+func IdIsPresent(id string) bool {
+	db, err := getDb()
+	if err != nil {
+		return false
+	}
+	defer db.Close()
+	rows, err := db.Query(getBlob, id)
+	if err != nil {
+		fmt.Println("SQL execution error:", err)
+		return false
+	}
+	if !rows.Next() {
+		fmt.Println("No blob with such id")
+		return false
+	}
+	return true
+}
+
+func UpdateBlob(id string, blob *res.Blob) error {
+	db, err := getDb()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	jsonRepr, err := json.Marshal(blob.Data.Attributes.Value)
+	_, err = db.Query(updateBlob, jsonRepr, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return err

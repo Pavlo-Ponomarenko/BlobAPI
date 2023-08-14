@@ -1,8 +1,6 @@
-allOf:
-  - $ref: '#/components/schemas/DeliveryKey'
-  - type: object
-    required:
-      - attributes
-    properties:
-      attributes:
-        type: object
+type: object
+required:
+  - data
+properties:
+  data:
+    $ref: '#/components/schemas/blobModel'
