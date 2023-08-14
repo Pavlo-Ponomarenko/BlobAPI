@@ -1,4 +1,4 @@
-package handlers
+package data
 
 import (
 	res "blob-service/resources"
@@ -15,13 +15,18 @@ var deleteBlob = "delete from blobs where id = $1"
 var getBlobsPage = "select * from blobs"
 var updateBlob = "update blobs set blob = $1 where id = $2"
 
-func getDb() (*sql.DB, error) {
+func CreateNewBlobsQ() (IBlobsQ, error) {
 	connection := "postgres://user:postgres@localhost/postgres?sslmode=disable"
 	db, err := sql.Open("postgres", connection)
 	if err != nil {
 		fmt.Println("DB connection error")
 	}
-	return db, err
+	newQ := BlobsQ{db: db}
+	return &newQ, err
+}
+
+func (q *BlobsQ) Close() {
+	q.db.Close()
 }
 
 func retrieveBlob(rows *sql.Rows) (*res.BlobModel, error) {
@@ -41,14 +46,8 @@ func retrieveBlob(rows *sql.Rows) (*res.BlobModel, error) {
 	return blob, nil
 }
 
-func GetBlobById(id string) (*res.BlobModel, error) {
-	db, err := getDb()
-	if err != nil {
-
-		return nil, err
-	}
-	defer db.Close()
-	rows, err := db.Query(getBlob, id)
+func (q *BlobsQ) GetBlobById(id string) (*res.BlobModel, error) {
+	rows, err := q.db.Query(getBlob, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return nil, err
@@ -57,7 +56,6 @@ func GetBlobById(id string) (*res.BlobModel, error) {
 		fmt.Println("No blob with such id")
 		return nil, errors.New("")
 	}
-	defer rows.Close()
 	return retrieveBlob(rows)
 }
 
@@ -86,52 +84,35 @@ func formQuery(params map[string]string) (*string, error) {
 	return &query, nil
 }
 
-func GetBlobs(params map[string]string) (*res.BlobModelListResponse, error) {
+func (q *BlobsQ) GetBlobs(params map[string]string) ([]res.BlobModel, error) {
 	query, err := formQuery(params)
 	if err != nil {
 		return nil, err
 	}
-	db, err := getDb()
-	if err != nil {
-		return nil, err
-	}
-	defer db.Close()
-	rows, err := db.Query(*query)
+	rows, err := q.db.Query(*query)
 	blobs := make([]res.BlobModel, 0, 20)
 	for rows.Next() {
 		blob, _ := retrieveBlob(rows)
 		blobs = append(blobs, *blob)
 	}
-	blobResponse := new(res.BlobModelListResponse)
-	blobResponse.Data = blobs
-	return blobResponse, nil
+	return blobs, nil
 }
 
-func SaveBlob(blob *res.Blob) error {
-	db, err := getDb()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+func (q *BlobsQ) SaveBlob(blob *res.Blob) error {
 	jsonRepr, err := json.Marshal(blob.Data.Attributes.Value)
 	if err != nil {
 		fmt.Println("Attributes encoding error")
 		return err
 	}
-	_, err = db.Exec(saveBlob, blob.Data.ID, jsonRepr)
+	_, err = q.db.Exec(saveBlob, blob.Data.ID, jsonRepr)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 	}
 	return err
 }
 
-func DeleteBlob(id string) error {
-	db, err := getDb()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-	_, err = db.Query(deleteBlob, id)
+func (q *BlobsQ) DeleteBlob(id string) error {
+	_, err := q.db.Query(deleteBlob, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return err
@@ -139,13 +120,8 @@ func DeleteBlob(id string) error {
 	return nil
 }
 
-func IdIsPresent(id string) bool {
-	db, err := getDb()
-	if err != nil {
-		return false
-	}
-	defer db.Close()
-	rows, err := db.Query(getBlob, id)
+func (q *BlobsQ) IdIsPresent(id string) bool {
+	rows, err := q.db.Query(getBlob, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return false
@@ -157,14 +133,9 @@ func IdIsPresent(id string) bool {
 	return true
 }
 
-func UpdateBlob(id string, blob *res.Blob) error {
-	db, err := getDb()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
+func (q *BlobsQ) UpdateBlob(id string, blob *res.Blob) error {
 	jsonRepr, err := json.Marshal(blob.Data.Attributes.Value)
-	_, err = db.Query(updateBlob, jsonRepr, id)
+	_, err = q.db.Query(updateBlob, jsonRepr, id)
 	if err != nil {
 		fmt.Println("SQL execution error:", err)
 		return err
