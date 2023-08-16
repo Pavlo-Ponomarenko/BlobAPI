@@ -13,6 +13,7 @@ import (
 type blobsQ struct {
 	db        *pgdb.DB
 	sql       sq.SelectBuilder
+	sqlInsert sq.InsertBuilder
 	sqlUpdate sq.UpdateBuilder
 	sqlDelete sq.DeleteBuilder
 }
@@ -23,6 +24,7 @@ func NewBlobsQ(db *pgdb.DB) data.BlobsQ {
 	return &blobsQ{
 		db:        db.Clone(),
 		sql:       sq.Select("*").From(blobsTable),
+		sqlInsert: sq.Insert(blobsTable),
 		sqlUpdate: sq.Update(blobsTable),
 		sqlDelete: sq.Delete(blobsTable),
 	}
@@ -52,8 +54,8 @@ func (q *blobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]res.Blob, error) 
 func (q *blobsQ) SaveBlob(blob *res.Blob) (*res.Blob, error) {
 	clauses := structs.Map(blobToEntity(blob))
 	var result blobEntity
-	stmt := sq.Insert(blobsTable).SetMap(clauses).Suffix("returning id, blob")
-	err := q.db.Get(&result, stmt)
+	q.sqlInsert = q.sqlInsert.SetMap(clauses).Suffix("returning id, blob")
+	err := q.db.Get(&result, q.sqlInsert)
 	return entityToBlob(&result), err
 }
 
