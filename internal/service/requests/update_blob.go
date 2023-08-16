@@ -7,19 +7,23 @@ import (
 )
 
 type UpdateBlobRequest struct {
-	Id   string
-	Data res.Blob
+	Id        string
+	BlobModel UpdateBlobModel
+}
+
+type UpdateBlobModel struct {
+	Data res.Blob `json:"data"`
 }
 
 func NewUpdateBlobRequest(r *http.Request) (*UpdateBlobRequest, error) {
 	id, err := retrieveId(r)
-	blob := new(res.Blob)
-	err = json.NewDecoder(r.Body).Decode(blob)
+	blobModel := new(UpdateBlobModel)
+	err = json.NewDecoder(r.Body).Decode(blobModel)
 	if err != nil {
 		return nil, err
 	}
 	request := new(UpdateBlobRequest)
 	request.Id = *id
-	request.Data = *blob
+	request.BlobModel = *blobModel
 	return request, nil
 }

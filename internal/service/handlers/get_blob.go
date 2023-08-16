@@ -1,29 +1,24 @@
 package handlers
 
 import (
-	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
 	res "blob-service/resources"
 	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
 )
 
 func GetBlobById(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewGetBlobByIdRequest(r)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	q, err := data.CreateNewBlobsQ()
+	q := BlobsQ(r)
+	blob, err := q.GetBlobById(request.ID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	defer q.Close()
-	model, err := q.GetBlobById(request.ID)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		ape.RenderErr(w, problems.NotFound())
 		return
 	}
-	w.Header().Set("Content-Type", "application/vnd.api+json")
-	ape.Render(w, res.BlobModelResponse{Data: *model})
+	ape.Render(w, res.BlobResponse{Data: *blob})
 }

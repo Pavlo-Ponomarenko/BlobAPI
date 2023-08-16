@@ -1,26 +1,25 @@
 package handlers
 
 import (
-	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
+	res "blob-service/resources"
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
 )
 
 func CreateNewBlob(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewCreateBlobRequest(r)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	q, err := data.CreateNewBlobsQ()
+	q := BlobsQ(r)
+	blob, err := q.SaveBlob(&request.Data)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	defer q.Close()
-	err = q.SaveBlob(&request.Data)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/vnd.api+json")
+	ape.Render(w, res.BlobResponse{Data: *blob})
 }

@@ -8,7 +8,10 @@ get:
       content:
         'application/vnd.api+json':
           schema:
-            $ref: '#/components/schemas/blobContent'
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Blob'
     '404':
       description: The blob wasn't found
     '500':
@@ -18,7 +21,7 @@ delete:
   parameters:
     - $ref: '#/components/parameters/idParam'
   responses:
-    '200':
+    '204':
       description: The blob was deleted
     '404':
       description: The blob wasn't found
@@ -32,7 +35,7 @@ put:
   content:
     'application/vnd.api+json':
       schema:
-        $ref: '#/components/schemas/blob'
+        $ref: '#/components/schemas/Blob'
       example:
         data:
           type: blob
@@ -45,35 +48,7 @@ put:
       content:
         'application/vnd.api+json':
           schema:
-            $ref: '#/components/schemas/blob'
-    '400':
-      description: Inappropriate blob data
-    '404':
-      description: Inappropriate blob data
-    '500':
-      description: Server error
-
-patch:
-  description: The same as 'PUT'
-  parameters:
-    - $ref: '#/components/parameters/idParam'
-  content:
-    'application/vnd.api+json':
-      schema:
-        $ref: '#/components/schemas/blobContent'
-      example:
-        data:
-          type: blob
-          id: null
-          attributes: { first: null, second: null, last: null }
-  required: true
-  responses:
-    '200':
-      description: The blob was updated
-      content:
-        'application/vnd.api+json':
-          schema:
-            $ref: '#/components/schemas/blobContent'
+            $ref: '#/components/schemas/Blob'
     '400':
       description: Inappropriate blob data
     '404':

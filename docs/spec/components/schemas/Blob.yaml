@@ -1,5 +1,5 @@
 allOf:
-  - $ref: '#/components/schemas/blobKey'
+  - $ref: '#/components/schemas/BlobKey'
   - type: object
     required:
       - attributes
@@ -9,3 +9,4 @@ allOf:
         properties:
           value:
             type: object
+            format: json.RawMessage

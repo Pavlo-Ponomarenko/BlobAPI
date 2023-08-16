@@ -10,9 +10,12 @@ get:
       content:
         'application/vnd.api+json':
           schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/blob'
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Blob'
     '500':
       description: Server error
 
@@ -23,7 +26,7 @@ post:
     content:
       'application/vnd.api+json':
         schema:
-          $ref: '#/components/schemas/blob'
+          $ref: '#/components/schemas/Blob'
         example:
           data:
             type: blob
@@ -36,7 +39,7 @@ post:
       content:
         'application/vnd.api+json':
           schema:
-            $ref: '#/components/schemas/blob'
+            $ref: '#/components/schemas/Blob'
     '400':
       description: Inappropriate blob data
     '500':

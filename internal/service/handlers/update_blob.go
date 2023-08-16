@@ -1,27 +1,30 @@
 package handlers
 
 import (
-	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
+	"gitlab.com/distributed_lab/ape"
+	"gitlab.com/distributed_lab/ape/problems"
 	"net/http"
 )
 
 func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 	request, err := requests.NewUpdateBlobRequest(r)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	q, err := data.CreateNewBlobsQ()
+	q := BlobsQ(r)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		ape.RenderErr(w, problems.InternalError())
+		return
 	}
-	defer q.Close()
 	if !q.IdIsPresent(request.Id) {
-		w.WriteHeader(http.StatusNotFound)
+		ape.RenderErr(w, problems.NotFound())
+		return
 	}
-	if err := q.UpdateBlob(request.Id, &request.Data); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := q.UpdateBlob(request.Id, &request.BlobModel.Data); err != nil {
+		ape.RenderErr(w, problems.InternalError())
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 }
