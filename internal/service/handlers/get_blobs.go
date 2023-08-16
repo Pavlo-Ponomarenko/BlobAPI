@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
 	res "blob-service/resources"
 	"gitlab.com/distributed_lab/ape"
@@ -14,10 +15,11 @@ func GetPageOfBlobs(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 	}
 	q := BlobsQ(r)
-	response, err := q.GetBlobs(request.Params)
+	entities, err := q.GetBlobs(request.Params)
 	if err != nil {
 		ape.RenderErr(w, problems.BadRequest(err)...)
 		return
 	}
-	ape.Render(w, res.BlobListResponse{Data: response})
+	blobs := data.EntitiesToBlobs(entities)
+	ape.Render(w, res.BlobListResponse{Data: blobs})
 }

@@ -2,7 +2,6 @@ package pg
 
 import (
 	"blob-service/internal/data"
-	res "blob-service/resources"
 	"database/sql"
 	"errors"
 	sq "github.com/Masterminds/squirrel"
@@ -34,29 +33,29 @@ func (q *blobsQ) New() data.BlobsQ {
 	return NewBlobsQ(q.db)
 }
 
-func (q *blobsQ) GetBlobById(id string) (*res.Blob, error) {
-	var result blobEntity
+func (q *blobsQ) GetBlobById(id string) (*data.BlobEntity, error) {
+	var result data.BlobEntity
 	q.sql = q.sql.Where(sq.Eq{"id": id})
 	err := q.db.Get(&result, q.sql)
 	if err == sql.ErrNoRows {
 		return nil, err
 	}
-	return entityToBlob(&result), nil
+	return &result, nil
 }
 
-func (q *blobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]res.Blob, error) {
-	var result []blobEntity
+func (q *blobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]data.BlobEntity, error) {
+	var result []data.BlobEntity
 	q.sql = pageParams.ApplyTo(q.sql, "id")
 	err := q.db.Select(&result, q.sql)
-	return entitiesToBlobs(result), err
+	return result, err
 }
 
-func (q *blobsQ) SaveBlob(blob *res.Blob) (*res.Blob, error) {
-	clauses := structs.Map(blobToEntity(blob))
-	var result blobEntity
+func (q *blobsQ) SaveBlob(blob *data.BlobEntity) (*data.BlobEntity, error) {
+	clauses := structs.Map(blob)
+	var result data.BlobEntity
 	q.sqlInsert = q.sqlInsert.SetMap(clauses).Suffix("returning id, blob")
 	err := q.db.Get(&result, q.sqlInsert)
-	return entityToBlob(&result), err
+	return &result, err
 }
 
 func (q *blobsQ) DeleteBlob(id string) error {
@@ -72,19 +71,17 @@ func (q *blobsQ) IdIsPresent(id string) bool {
 	return true
 }
 
-func (q *blobsQ) UpdateBlob(id string, blob *res.Blob) (*res.Blob, error) {
+func (q *blobsQ) UpdateBlob(id string, blob *data.BlobEntity) (*data.BlobEntity, error) {
 	if !q.IdIsPresent(id) {
 		return nil, errors.New("")
 	}
-	entity := new(blobEntity)
-	entity.Id = id
-	entity.Blob = blob.Attributes.Value
-	clauses := structs.Map(entity)
+	blob.Id = id
+	clauses := structs.Map(blob)
 	q.sqlUpdate = q.sqlUpdate.SetMap(clauses).Where(sq.Eq{"id": id}).Suffix("returning id, blob")
-	var result blobEntity
+	var result data.BlobEntity
 	err := q.db.Get(&result, q.sqlUpdate)
 	if err != nil {
 		return nil, err
 	}
-	return entityToBlob(&result), nil
+	return &result, nil
 }

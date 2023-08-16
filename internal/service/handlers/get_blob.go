@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
 	res "blob-service/resources"
 	"gitlab.com/distributed_lab/ape"
@@ -15,10 +16,11 @@ func GetBlobById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	q := BlobsQ(r)
-	blob, err := q.GetBlobById(request.ID)
+	blobEntity, err := q.GetBlobById(request.ID)
 	if err != nil {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
+	blob := data.EntityToBlob(blobEntity)
 	ape.Render(w, res.BlobResponse{Data: *blob})
 }

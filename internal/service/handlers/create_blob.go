@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
 	res "blob-service/resources"
 	"gitlab.com/distributed_lab/ape"
@@ -15,11 +16,12 @@ func CreateNewBlob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	q := BlobsQ(r)
-	blob, err := q.SaveBlob(&request.Data)
+	blobEntity, err := q.SaveBlob(data.BlobToEntity(&request.Data))
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
+	blob := data.EntityToBlob(blobEntity)
 	w.Header().Set("Content-Type", "application/vnd.api+json")
 	ape.Render(w, res.BlobResponse{Data: *blob})
 }

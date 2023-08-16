@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blob-service/internal/data"
 	"blob-service/internal/service/requests"
 	res "blob-service/resources"
 	"gitlab.com/distributed_lab/ape"
@@ -23,10 +24,11 @@ func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.NotFound())
 		return
 	}
-	updatedBlob, err := q.UpdateBlob(request.Id, &request.BlobModel.Data)
+	entity, err := q.UpdateBlob(request.Id, data.BlobToEntity(&request.BlobModel.Data))
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	ape.Render(w, res.BlobResponse{Data: *updatedBlob})
+	blob := data.EntityToBlob(entity)
+	ape.Render(w, res.BlobResponse{Data: *blob})
 }

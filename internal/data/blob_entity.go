@@ -1,23 +1,23 @@
-package pg
+package data
 
 import (
 	res "blob-service/resources"
 	"encoding/json"
 )
 
-type blobEntity struct {
+type BlobEntity struct {
 	Id   string           `db:"id"`
 	Blob *json.RawMessage `db:"blob"`
 }
 
-func blobToEntity(blob *res.Blob) *blobEntity {
-	entity := new(blobEntity)
+func BlobToEntity(blob *res.Blob) *BlobEntity {
+	entity := new(BlobEntity)
 	entity.Id = blob.ID
 	entity.Blob = blob.Attributes.Value
 	return entity
 }
 
-func entityToBlob(entity *blobEntity) *res.Blob {
+func EntityToBlob(entity *BlobEntity) *res.Blob {
 	blob := new(res.Blob)
 	blob.ID = entity.Id
 	blob.Type = "blob"
@@ -25,10 +25,10 @@ func entityToBlob(entity *blobEntity) *res.Blob {
 	return blob
 }
 
-func entitiesToBlobs(entities []blobEntity) []res.Blob {
+func EntitiesToBlobs(entities []BlobEntity) []res.Blob {
 	blobs := make([]res.Blob, 0, 20)
 	for i := range entities {
-		blobs = append(blobs, *entityToBlob(&entities[i]))
+		blobs = append(blobs, *EntityToBlob(&entities[i]))
 	}
 	return blobs
 }
