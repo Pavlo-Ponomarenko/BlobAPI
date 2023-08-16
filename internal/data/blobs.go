@@ -13,5 +13,5 @@ type BlobsQ interface {
 	SaveBlob(blob *res.Blob) (*res.Blob, error)
 	DeleteBlob(id string) error
 	IdIsPresent(id string) bool
-	UpdateBlob(id string, blob *res.Blob) error
+	UpdateBlob(id string, blob *res.Blob) (*res.Blob, error)
 }

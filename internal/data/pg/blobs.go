@@ -70,14 +70,19 @@ func (q *blobsQ) IdIsPresent(id string) bool {
 	return true
 }
 
-func (q *blobsQ) UpdateBlob(id string, blob *res.Blob) error {
+func (q *blobsQ) UpdateBlob(id string, blob *res.Blob) (*res.Blob, error) {
 	if !q.IdIsPresent(id) {
-		return errors.New("")
+		return nil, errors.New("")
 	}
 	entity := new(blobEntity)
 	entity.Id = id
 	entity.Blob = blob.Attributes.Value
 	clauses := structs.Map(entity)
-	q.sqlUpdate = q.sqlUpdate.SetMap(clauses).Where(sq.Eq{"id": id})
-	return q.db.Exec(q.sqlUpdate)
+	q.sqlUpdate = q.sqlUpdate.SetMap(clauses).Where(sq.Eq{"id": id}).Suffix("returning id, blob")
+	var result blobEntity
+	err := q.db.Get(&result, q.sqlUpdate)
+	if err != nil {
+		return nil, err
+	}
+	return entityToBlob(&result), nil
 }
