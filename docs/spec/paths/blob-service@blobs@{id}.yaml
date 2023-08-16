@@ -35,7 +35,10 @@ put:
   content:
     'application/vnd.api+json':
       schema:
-        $ref: '#/components/schemas/Blob'
+        type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Blob'
       example:
         data:
           type: blob
