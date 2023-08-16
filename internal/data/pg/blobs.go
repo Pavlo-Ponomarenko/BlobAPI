@@ -3,7 +3,7 @@ package pg
 import (
 	"blob-service/internal/data"
 	"database/sql"
-	"errors"
+	"fmt"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/fatih/structs"
 	"gitlab.com/distributed_lab/kit/pgdb"
@@ -64,17 +64,18 @@ func (q *blobsQ) DeleteBlob(id string) error {
 }
 
 func (q *blobsQ) IdIsPresent(id string) bool {
-	blob, _ := q.GetBlobById(id)
-	if blob == nil {
+	subQuery := fmt.Sprintf("exists (select * from %s where id = '%s') as result", blobsTable, id)
+	query := sq.Select(subQuery)
+	var idExists bool
+	err := q.db.Get(&idExists, query)
+	if err != nil || !idExists {
+		fmt.Println(err)
 		return false
 	}
 	return true
 }
 
 func (q *blobsQ) UpdateBlob(id string, blob *data.BlobEntity) (*data.BlobEntity, error) {
-	if !q.IdIsPresent(id) {
-		return nil, errors.New("")
-	}
 	blob.Id = id
 	clauses := structs.Map(blob)
 	q.sqlUpdate = q.sqlUpdate.SetMap(clauses).Where(sq.Eq{"id": id}).Suffix("returning id, blob")
