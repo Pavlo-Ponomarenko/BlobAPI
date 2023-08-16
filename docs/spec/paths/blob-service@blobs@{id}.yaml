@@ -48,7 +48,10 @@ put:
       content:
         'application/vnd.api+json':
           schema:
-            $ref: '#/components/schemas/Blob'
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Blob'
     '400':
       description: Inappropriate blob data
     '404':
