@@ -1,7 +1,8 @@
+parameters:
+  - $ref: '#/components/parameters/idParam'
+
 get:
   description: Get a single blob by his id
-  parameters:
-    - $ref: '#/components/parameters/idParam'
   responses:
     '200':
       description: The blob is returned
@@ -18,8 +19,6 @@ get:
       description: Server error
 delete:
   description: Delete a blob by his id
-  parameters:
-    - $ref: '#/components/parameters/idParam'
   responses:
     '204':
       description: The blob was deleted
@@ -30,8 +29,6 @@ delete:
 
 put:
   description: Updates blob
-  parameters:
-    - $ref: '#/components/parameters/idParam'
   content:
     'application/vnd.api+json':
       schema:
