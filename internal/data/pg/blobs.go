@@ -69,7 +69,6 @@ func (q *blobsQ) IdIsPresent(id string) bool {
 	var idExists bool
 	err := q.db.Get(&idExists, query)
 	if err != nil || !idExists {
-		fmt.Println(err)
 		return false
 	}
 	return true

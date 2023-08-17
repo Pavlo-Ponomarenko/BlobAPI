@@ -22,6 +22,5 @@ func CreateNewBlob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	blob := data.EntityToBlob(blobEntity)
-	w.Header().Set("Content-Type", "application/vnd.api+json")
 	ape.Render(w, res.BlobResponse{Data: *blob})
 }
