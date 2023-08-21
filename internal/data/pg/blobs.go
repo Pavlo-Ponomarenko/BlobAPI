@@ -52,16 +52,12 @@ func (q *blobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]data.BlobEntity, 
 }
 
 func (q *blobsQ) SaveBlob(blob *data.BlobEntity) (*data.BlobEntity, error) {
-	_, err := horizon.CreateBlob(blob)
+	newBlob, err := horizon.CreateBlob(blob)
 	if err != nil {
 		fmt.Println("Saving to blockchain failed: ", err)
 		return nil, err
 	}
-	clauses := structs.Map(blob)
-	var result data.BlobEntity
-	q.sqlInsert = q.sqlInsert.SetMap(clauses).Suffix("returning id, blob")
-	err = q.db.Get(&result, q.sqlInsert)
-	return &result, err
+	return newBlob, err
 }
 
 func (q *blobsQ) DeleteBlob(id string) error {

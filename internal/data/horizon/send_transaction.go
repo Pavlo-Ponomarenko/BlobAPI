@@ -5,8 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/stellar/go/xdr"
+	"gitlab.com/tokend/go/xdr"
 	"io"
 	"net/http"
 )
@@ -46,12 +45,24 @@ func getBlobFromResult(result []byte) (*data.BlobEntity, error) {
 	if err != nil {
 		return nil, err
 	}
-	encodedMeta := transactionResult.Data["attributes"].(map[string]interface{})["result_meta_xdr"]
-	var resultMeta xdr.TransactionResultMeta
+	dict := transactionResult.Data["attributes"].(map[string]interface{})
+	encodedStatus := dict["result_xdr"]
+	var responseStatus xdr.TransactionResult
+	err = xdr.SafeUnmarshalBase64(encodedStatus.(string), &responseStatus)
+	if responseStatus.Result.Code != xdr.TransactionResultCodeTxSuccess {
+		return nil, errors.New("")
+	}
+	encodedMeta := dict["result_meta_xdr"]
+	var resultMeta xdr.TransactionMeta
 	err = xdr.SafeUnmarshalBase64(encodedMeta.(string), &resultMeta)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(resultMeta)
-	return nil, nil
+	decodedBlob := (*resultMeta.Operations)[0].Changes[0].Created.Data.Data.Value
+	createdBlob := new(data.BlobEntity)
+	err = json.Unmarshal([]byte(decodedBlob), createdBlob)
+	if err != nil {
+		return nil, err
+	}
+	return createdBlob, nil
 }

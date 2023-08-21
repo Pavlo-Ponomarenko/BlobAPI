@@ -39,6 +39,7 @@ require (
 	github.com/spf13/viper v1.3.2 // indirect
 	github.com/stellar/go v0.0.0-20230818193639-7ad41e03c1b3 // indirect
 	github.com/stellar/go-xdr v0.0.0-20211103144802-8017fc4bdfee // indirect
+	github.com/tokend/xdr v3.1.1+incompatible // indirect
 	gitlab.com/distributed_lab/ape v1.7.1 // indirect
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible // indirect
 	gitlab.com/distributed_lab/kit v1.11.2 // indirect
