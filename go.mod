@@ -14,6 +14,7 @@ require (
 	github.com/getsentry/sentry-go v0.23.0 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.2.1 // indirect
 	github.com/google/jsonapi v0.0.0-20200226002910-c8283f632fb7 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -27,7 +28,7 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/nullstyle/go-xdr v0.0.0-20180726165426-f4c839f75077 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/pelletier/go-toml v1.2.0 // indirect
+	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rubenv/sql-migrate v1.5.2 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
@@ -36,6 +37,8 @@ require (
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/spf13/viper v1.3.2 // indirect
+	github.com/stellar/go v0.0.0-20230818193639-7ad41e03c1b3 // indirect
+	github.com/stellar/go-xdr v0.0.0-20211103144802-8017fc4bdfee // indirect
 	gitlab.com/distributed_lab/ape v1.7.1 // indirect
 	gitlab.com/distributed_lab/figure v2.1.0+incompatible // indirect
 	gitlab.com/distributed_lab/kit v1.11.2 // indirect
@@ -43,6 +46,8 @@ require (
 	gitlab.com/distributed_lab/lorem v0.2.0 // indirect
 	gitlab.com/distributed_lab/running v1.6.0 // indirect
 	gitlab.com/tokend/go v3.16.0+incompatible // indirect
+	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
+	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

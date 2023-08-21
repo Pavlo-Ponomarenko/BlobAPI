@@ -2,6 +2,7 @@ package pg
 
 import (
 	"blob-service/internal/data"
+	"blob-service/internal/data/horizon"
 	"database/sql"
 	"fmt"
 	sq "github.com/Masterminds/squirrel"
@@ -51,10 +52,15 @@ func (q *blobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]data.BlobEntity, 
 }
 
 func (q *blobsQ) SaveBlob(blob *data.BlobEntity) (*data.BlobEntity, error) {
+	_, err := horizon.CreateBlob(blob)
+	if err != nil {
+		fmt.Println("Saving to blockchain failed: ", err)
+		return nil, err
+	}
 	clauses := structs.Map(blob)
 	var result data.BlobEntity
 	q.sqlInsert = q.sqlInsert.SetMap(clauses).Suffix("returning id, blob")
-	err := q.db.Get(&result, q.sqlInsert)
+	err = q.db.Get(&result, q.sqlInsert)
 	return &result, err
 }
 
