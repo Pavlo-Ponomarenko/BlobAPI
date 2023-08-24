@@ -1,6 +1,7 @@
 package horizon
 
 import (
+	"encoding/json"
 	"gitlab.com/tokend/go/keypair"
 	"gitlab.com/tokend/go/xdrbuild"
 )
@@ -17,4 +18,14 @@ func formTransaction(op xdrbuild.Operation) (string, error) {
 	transaction.Op(op)
 	transaction.Sign(source.(*keypair.Full))
 	return transaction.Marshal()
+}
+
+func formJsonRequest(transaction string) []byte {
+	request := transactionPostRequest{
+		Tx:            transaction,
+		WaitForIngest: false,
+		WaitForResult: true,
+	}
+	jsonRequest, _ := json.Marshal(request)
+	return jsonRequest
 }

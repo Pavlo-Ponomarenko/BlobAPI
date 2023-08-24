@@ -20,10 +20,6 @@ func UpdateBlob(w http.ResponseWriter, r *http.Request) {
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}
-	if !q.IdIsPresent(request.Id) {
-		ape.RenderErr(w, problems.NotFound())
-		return
-	}
 	entity, err := q.UpdateBlob(request.Id, data.BlobToEntity(&request.BlobModel.Data))
 	if err != nil {
 		ape.RenderErr(w, problems.InternalError())

@@ -11,6 +11,5 @@ type BlobsQ interface {
 	GetBlobs(pageParams pgdb.OffsetPageParams) ([]BlobEntity, error)
 	SaveBlob(blob *BlobEntity) (*BlobEntity, error)
 	DeleteBlob(id string) error
-	IdIsPresent(id string) bool
 	UpdateBlob(id string, blob *BlobEntity) (*BlobEntity, error)
 }

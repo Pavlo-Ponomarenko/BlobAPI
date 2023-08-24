@@ -11,15 +11,28 @@ import (
 )
 
 const (
-	apiUrl = "http://localhost:8000/_/api/"
+	sendTransactionURL = "http://localhost:8000/_/api/"
 )
 
-type createBlobResult struct {
+type transactionPostRequest struct {
+	Tx            string `json:"tx"`
+	WaitForIngest bool   `json:"wait_for_ingest"`
+	WaitForResult bool   `json:"wait_for_result"`
+}
+
+type blobTransactionResult struct {
 	Data map[string]interface{} `json:"data"`
 }
 
-func sendTransaction(endpoint string, jsonData []byte) (*data.BlobEntity, error) {
-	httpRequest, err := http.NewRequest("POST", apiUrl+endpoint, bytes.NewBuffer(jsonData))
+const (
+	createBlobTransaction = 0
+	updateBlobTransaction = 1
+)
+
+type transactionType int
+
+func sendTransaction(endpoint string, jsonData []byte) ([]byte, error) {
+	httpRequest, err := http.NewRequest("POST", sendTransactionURL+endpoint, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
@@ -36,33 +49,47 @@ func sendTransaction(endpoint string, jsonData []byte) (*data.BlobEntity, error)
 	if err != nil {
 		return nil, err
 	}
-	return getBlobFromResult(body)
+	return body, nil
 }
 
-func getBlobFromResult(result []byte) (*data.BlobEntity, error) {
-	var transactionResult createBlobResult
-	err := json.Unmarshal(result, &transactionResult)
-	if err != nil {
-		return nil, err
-	}
-	dict := transactionResult.Data["attributes"].(map[string]interface{})
-	encodedStatus := dict["result_xdr"]
-	var responseStatus xdr.TransactionResult
-	err = xdr.SafeUnmarshalBase64(encodedStatus.(string), &responseStatus)
-	if responseStatus.Result.Code != xdr.TransactionResultCodeTxSuccess {
+func getBlobFromResult(result []byte, resultType transactionType) (*data.BlobEntity, error) {
+	dict := getAttributes(result)
+	responseInfo := getResultXDR(dict)
+	if responseInfo.Result.Code != xdr.TransactionResultCodeTxSuccess {
 		return nil, errors.New("")
 	}
-	encodedMeta := dict["result_meta_xdr"]
-	var resultMeta xdr.TransactionMeta
-	err = xdr.SafeUnmarshalBase64(encodedMeta.(string), &resultMeta)
-	if err != nil {
-		return nil, err
+	resultMeta := getResultMetaXDR(dict)
+	var decodedBlob xdr.Longstring
+	switch resultType {
+	case createBlobTransaction:
+		decodedBlob = (*resultMeta.Operations)[0].Changes[0].Created.Data.Data.Value
+	case updateBlobTransaction:
+		decodedBlob = (*resultMeta.Operations)[0].Changes[0].Updated.Data.Data.Value
 	}
-	decodedBlob := (*resultMeta.Operations)[0].Changes[0].Created.Data.Data.Value
 	createdBlob := new(data.BlobEntity)
-	err = json.Unmarshal([]byte(decodedBlob), createdBlob)
+	err := json.Unmarshal([]byte(decodedBlob), createdBlob)
 	if err != nil {
 		return nil, err
 	}
 	return createdBlob, nil
+}
+
+func getAttributes(result []byte) map[string]interface{} {
+	var transactionResult blobTransactionResult
+	_ = json.Unmarshal(result, &transactionResult)
+	return transactionResult.Data["attributes"].(map[string]interface{})
+}
+
+func getResultXDR(attributes map[string]interface{}) xdr.TransactionResult {
+	encodedStatus := attributes["result_xdr"]
+	var responseStatus xdr.TransactionResult
+	_ = xdr.SafeUnmarshalBase64(encodedStatus.(string), &responseStatus)
+	return responseStatus
+}
+
+func getResultMetaXDR(attributes map[string]interface{}) xdr.TransactionMeta {
+	encodedMeta := attributes["result_meta_xdr"]
+	var resultMeta xdr.TransactionMeta
+	_ = xdr.SafeUnmarshalBase64(encodedMeta.(string), &resultMeta)
+	return resultMeta
 }

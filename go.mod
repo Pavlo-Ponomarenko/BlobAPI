@@ -48,6 +48,7 @@ require (
 	gitlab.com/distributed_lab/running v1.6.0 // indirect
 	gitlab.com/tokend/go v3.16.0+incompatible // indirect
 	gitlab.com/tokend/keypair v0.0.0-20190412110653-b9d7e0c8b312 // indirect
+	gitlab.com/tokend/regources v4.9.1+incompatible // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect

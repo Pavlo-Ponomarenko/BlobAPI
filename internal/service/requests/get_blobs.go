@@ -21,6 +21,8 @@ func NewGetBlobsRequest(r *http.Request) (*GetBlobsRequest, error) {
 			return nil, err
 		}
 		params.Limit = value
+	} else {
+		params.Limit = 15
 	}
 	pageNumber := queryParams.Get("page[number]")
 	if pageNumber != "" {
@@ -37,6 +39,8 @@ func NewGetBlobsRequest(r *http.Request) (*GetBlobsRequest, error) {
 		} else {
 			return nil, errors.New("")
 		}
+	} else {
+		params.Order = "desc"
 	}
 	request := new(GetBlobsRequest)
 	request.Params = params
