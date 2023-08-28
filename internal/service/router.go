@@ -1,7 +1,7 @@
 package service
 
 import (
-	"blob-service/internal/data/pg"
+	"blob-service/internal/data/horizon"
 	"blob-service/internal/service/handlers"
 	"github.com/go-chi/chi"
 	"gitlab.com/distributed_lab/ape"
@@ -28,7 +28,7 @@ func (s *service) router() chi.Router {
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
 			handlers.CtxLog(s.log),
-			handlers.CtxBlobsQ(pg.NewCoreBlobsQ(adminSeed, getBlobsURL, coreInfoURL)),
+			handlers.CtxBlobsQ(horizon.NewCoreBlobsQ(adminSeed, getBlobsURL, coreInfoURL)),
 		),
 	)
 	r.Route("/blob-service", func(r chi.Router) {

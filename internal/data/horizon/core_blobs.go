@@ -1,8 +1,7 @@
-package pg
+package horizon
 
 import (
 	"blob-service/internal/data"
-	"blob-service/internal/data/horizon"
 	"gitlab.com/distributed_lab/kit/pgdb"
 )
 
@@ -25,15 +24,15 @@ func (q *coreBlobsQ) New() data.BlobsQ {
 }
 
 func (q *coreBlobsQ) GetBlobById(id string) (*data.BlobEntity, error) {
-	return horizon.GetBlobById(id, q.getBlobsURL)
+	return GetBlobById(id, q.getBlobsURL)
 }
 
 func (q *coreBlobsQ) GetBlobs(pageParams pgdb.OffsetPageParams) ([]data.BlobEntity, error) {
-	return horizon.GetBlobs(pageParams, q.adminSeed, q.getBlobsURL)
+	return GetBlobs(pageParams, q.adminSeed, q.getBlobsURL)
 }
 
 func (q *coreBlobsQ) SaveBlob(blob *data.BlobEntity) (*data.BlobEntity, error) {
-	newBlob, err := horizon.CreateBlob(blob, q.adminSeed, q.coreInfoURL)
+	newBlob, err := CreateBlob(blob, q.adminSeed, q.coreInfoURL)
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +40,9 @@ func (q *coreBlobsQ) SaveBlob(blob *data.BlobEntity) (*data.BlobEntity, error) {
 }
 
 func (q *coreBlobsQ) DeleteBlob(id string) error {
-	return horizon.DeleteBlob(id, q.adminSeed, q.coreInfoURL)
+	return DeleteBlob(id, q.adminSeed, q.coreInfoURL)
 }
 
 func (q *coreBlobsQ) UpdateBlob(id string, blob *data.BlobEntity) (*data.BlobEntity, error) {
-	return horizon.UpdateBlob(id, blob, q.adminSeed, q.getBlobsURL)
+	return UpdateBlob(id, blob, q.adminSeed, q.getBlobsURL)
 }
