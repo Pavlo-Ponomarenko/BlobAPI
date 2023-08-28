@@ -6,13 +6,13 @@ import (
 	"strconv"
 )
 
-func UpdateBlob(id string, entity *data.BlobEntity) (*data.BlobEntity, error) {
+func UpdateBlob(id string, entity *data.BlobEntity, adminSeed string, coreInfoURL string) (*data.BlobEntity, error) {
 	dataId, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		return nil, err
 	}
 	updateDataOp := xdrbuild.UpdateData{ID: dataId, Value: blobToJSON{*entity}}
-	transaction, _ := formTransaction(updateDataOp)
+	transaction, _ := formTransaction(updateDataOp, adminSeed, coreInfoURL)
 	jsonRequest := formJsonRequest(transaction)
 	result, err := sendTransaction("v3/transactions", jsonRequest)
 	if err != nil {

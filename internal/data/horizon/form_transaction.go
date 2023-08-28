@@ -6,13 +6,14 @@ import (
 	"gitlab.com/tokend/go/xdrbuild"
 )
 
-const (
-	adminSeed = "SAMJKTZVW5UOHCDK5INYJNORF2HRKYI72M5XSZCBYAHQHR34FFR4Z6G4"
-)
+var cashedCoreInfo coreInfoCash
 
-func formTransaction(op xdrbuild.Operation) (string, error) {
-	passphrase := "TokenD Developer Network"
-	builder := xdrbuild.NewBuilder(passphrase, 100)
+func formTransaction(op xdrbuild.Operation, adminSeed string, coreInfoURL string) (string, error) {
+	info, err := cashedCoreInfo.getInfo(coreInfoURL)
+	if err != nil {
+		return "", err
+	}
+	builder := xdrbuild.NewBuilder(info.Attributes.NetworkPassphrase, info.Attributes.TxExpirationPeriod)
 	source, _ := keypair.Parse(adminSeed)
 	transaction := builder.Transaction(source)
 	transaction.Op(op)

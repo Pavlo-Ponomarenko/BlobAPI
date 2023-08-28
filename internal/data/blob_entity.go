@@ -20,7 +20,7 @@ func BlobToEntity(blob *res.Blob) *BlobEntity {
 func EntityToBlob(entity *BlobEntity) *res.Blob {
 	blob := new(res.Blob)
 	blob.ID = entity.Id
-	blob.Type = "blob"
+	blob.Type = res.BLOB
 	blob.Attributes.Value = entity.Blob
 	return blob
 }

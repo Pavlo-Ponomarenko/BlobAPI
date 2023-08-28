@@ -1,7 +1,6 @@
 package service
 
 import (
-	"blob-service/internal/config"
 	"blob-service/internal/data/pg"
 	"blob-service/internal/service/handlers"
 	"github.com/go-chi/chi"
@@ -11,14 +10,25 @@ import (
 
 func (s *service) router() chi.Router {
 	r := chi.NewRouter()
-	conf := config.New(kv.MustFromEnv())
-
+	config := kv.MustFromEnv()
+	coreConfig, err := config.GetStringMap("coreConfig")
+	var adminSeed string
+	if err == nil {
+		adminSeed = coreConfig["admin_seed"].(string)
+	}
+	urls, err := config.GetStringMap("horizonURLs")
+	var getBlobsURL string
+	var coreInfoURL string
+	if err == nil {
+		getBlobsURL = urls["get_blobs_url"].(string)
+		coreInfoURL = urls["core_info_url"].(string)
+	}
 	r.Use(
 		ape.RecoverMiddleware(s.log),
 		ape.LoganMiddleware(s.log),
 		ape.CtxMiddleware(
 			handlers.CtxLog(s.log),
-			handlers.CtxBlobsQ(pg.NewBlobsQ(conf.DB())),
+			handlers.CtxBlobsQ(pg.NewCoreBlobsQ(adminSeed, getBlobsURL, coreInfoURL)),
 		),
 	)
 	r.Route("/blob-service", func(r chi.Router) {

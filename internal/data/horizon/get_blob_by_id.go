@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func GetBlobById(id string) (*data.BlobEntity, error) {
+func GetBlobById(id string, getBlobsURL string) (*data.BlobEntity, error) {
 	url := getBlobsURL + "/" + id
 	coreData, err := getAPIBlobById(url)
 	if err != nil {

@@ -5,9 +5,9 @@ import (
 	"gitlab.com/tokend/go/xdrbuild"
 )
 
-func CreateBlob(entity *data.BlobEntity) (*data.BlobEntity, error) {
+func CreateBlob(entity *data.BlobEntity, adminSeed string, coreInfoURL string) (*data.BlobEntity, error) {
 	createDataOp := xdrbuild.CreateData{Type: 1, Value: blobToJSON{*entity}}
-	transaction, err := formTransaction(createDataOp)
+	transaction, err := formTransaction(createDataOp, adminSeed, coreInfoURL)
 	jsonRequest := formJsonRequest(transaction)
 	result, err := sendTransaction("v3/transactions", jsonRequest)
 	if err != nil {

@@ -9,11 +9,7 @@ import (
 	"strconv"
 )
 
-const (
-	getBlobsURL = "http://localhost:8000/_/api/v3/data"
-)
-
-func GetBlobs(pageParams pgdb.OffsetPageParams) ([]data.BlobEntity, error) {
+func GetBlobs(pageParams pgdb.OffsetPageParams, adminSeed string, getBlobsURL string) ([]data.BlobEntity, error) {
 	source, _ := keypair.Parse(adminSeed)
 	pageNumber := strconv.FormatUint(pageParams.PageNumber, 10)
 	pageLimit := strconv.FormatUint(pageParams.Limit, 10)

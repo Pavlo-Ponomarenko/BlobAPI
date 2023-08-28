@@ -5,6 +5,13 @@ log:
 db:
   url: postgresql://user:postgres@localhost:5432/postgres?sslmode=disable
 
+coreConfig:
+  admin_seed: SAMJKTZVW5UOHCDK5INYJNORF2HRKYI72M5XSZCBYAHQHR34FFR4Z6G4
+
+horizonURLs:
+  get_blobs_url: http://localhost:8000/_/api/v3/data
+  core_info_url: http://localhost:8000/_/api/v3/info
+
 listener:
   addr: :8003
 
